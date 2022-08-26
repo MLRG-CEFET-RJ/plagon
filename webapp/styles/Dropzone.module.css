@@ -1,0 +1,18 @@
+.container {
+  align-items: center;
+  border-style: dashed;
+  display: flex;
+  flex-direction: column;
+  height: 15rem;
+  justify-content: center;
+}
+
+.dropzoneTextContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 0.4rem;
+}
+
+.iconContainer {
+  padding-top: 0.9rem;
+}

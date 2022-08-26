@@ -1,0 +1,54 @@
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mainContainer {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  max-height: 100%;
+  flex-direction: column;
+  margin-bottom: 2rem;
+  margin-left: 4rem;
+  margin-top: 2rem;
+  margin-right: 4rem;
+}
+
+
+.titlesContainer {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+}
+
+.subtitlesContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.textArea {
+  display: block;
+  padding: 0.2rem;
+  border-width: thin;
+  border-style: solid;
+  height: 55%;
+  width: 100%;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  overflow-y: scroll;
+  white-space: pre-wrap;
+}
+
+.plagiarizedPart {
+  background-color: #ff6666;
+}
+
+.buttonContainer {
+  align-self: flex-end;
+}

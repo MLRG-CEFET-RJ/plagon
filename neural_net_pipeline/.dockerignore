@@ -1,0 +1,5 @@
+data/skip-thoughts/pkl/*
+data/skip-thoughts/*.npz
+data/skip-thoughts/*.npz.pkl
+data/skip-thoughts/*.txt
+data/skip-thoughts/*.npy

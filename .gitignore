@@ -1,0 +1,29 @@
+# pipeline
+.git
+neural_net_pipeline/pancorpus/train/*
+neural_net_pipeline/plag_train.db
+neural_net_pipeline/src/__pycache__/
+neural_net_pipeline/data/pkl/*
+neural_net_pipeline/data/skip-thoughts/*
+neural_net_pipeline/data/
+
+# webapp
+webapp/node_modules
+webapp/.pnp
+webapp/.pnp.js
+webapp/coverage
+webapp/.next/
+webapp/out/
+webapp/build
+webapp/.DS_Store
+webapp/*.pem
+webapp/npm-debug.log*
+webapp/yarn-debug.log*
+webapp/yarn-error.log*
+webapp/.pnpm-debug.log*
+webapp/.env*.local
+webapp/.vercel
+webapp/*.tsbuildinfo
+webapp/.next
+
+webapp/database.db

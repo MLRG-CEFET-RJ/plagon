@@ -1,0 +1,9 @@
+services:
+  plagio:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./:/app
