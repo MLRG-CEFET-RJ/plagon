@@ -1,16 +1,17 @@
-import torch
-from torch.autograd import Variable
-from torch.nn import CosineSimilarity
 import sys, os
-import numpy as np
+from sentence_encoder import UniversalSentenceEncoder
 
-sys.path.append("skip-thoughts.torch/pytorch")
-from skipthoughts import UniSkip
+#sys.path.append("skip-thoughts.torch/pytorch")
 
 import argparse
 from pan_db import PanDatabaseManager
 import pickle
-from tensorflow.contrib import learn
+import tensorflow as tf
+import tensorflow_hub as hub
+
+MODULE_URL = "https://tfhub.dev/google/universal-sentence-encoder/4" 
+LOADED_MODEL = hub.load(MODULE_URL)
+print ("module %s loaded" % MODULE_URL)
 
 # Print iterations progress
 # source: https://stackoverflow.com/questions/3173320/text-progress-bar-in-the-console
@@ -44,15 +45,6 @@ def printProgressBar(
     if iteration == total:
         print()
 
-
-def get_vocab_processor(sentences, max_document_length, min_freq):
-    vocab_processor = learn.preprocessing.VocabularyProcessor(
-        max_document_length, min_frequency=min_freq
-    )
-    vocab_processor.fit_transform(sentences)
-    return vocab_processor
-
-
 def main():
     BATCH_SIZE = 512
 
@@ -66,12 +58,6 @@ def main():
     )
     parser.add_argument(
         "--debug", action="store_true", help="print debug messages to stderr"
-    )
-    parser.add_argument(
-        "--stdir", help="directory containing the SkipThougths model", required=True
-    )
-    parser.add_argument(
-        "--vocab", help="name of the text file holding the vocabulary", required=True
     )
     parser.add_argument(
         "--destdir",
@@ -91,21 +77,11 @@ def main():
     sentences = pandb.get_sentence_texts()
     print("Amount of sentences to be processed: ", len(sentences))
 
-    vocabulary = [line.rstrip("\n") for line in open(args.vocab)]
-
-    print("Size of vocabulary: ", len(vocabulary))
-
-    # NB: model will be created if it is not found in the given directory.
-    print("Loading skip-thoughts model...")
-    uniskip = UniSkip(args.stdir, vocabulary)
-
-    vocab_processor = get_vocab_processor(sentences, 30, 3)
-
     ids_for_docs = pandb.get_ids_for_documents()
 
-    printProgressBar(
-        0, len(ids_for_docs), prefix="Progress:", suffix="Complete", length=50
-    )
+    # printProgressBar(
+    #     0, len(ids_for_docs), prefix="Progress:", suffix="Complete", length=50
+    # )
     for doc_id in ids_for_docs:
 
         if doc_id < args.start:
@@ -114,37 +90,38 @@ def main():
         sentences = pandb.get_sentences_texts_for_doc(doc_id)
         l = len(sentences)
 
+        # possível adaptação ##########################
         if l > 5000:
             print(
                 "Skipping doc %d because it is too large (%d sentences)." % (doc_id, l)
             )
             continue
-
-        a_list = list(vocab_processor.fit_transform(sentences))
-        x = np.array(a_list)
-
-        batch_size = l
-        input = Variable(torch.LongTensor(x))
-        output_seq2vec = uniskip(input)
-
+        
+        sentence_encoder = UniversalSentenceEncoder(LOADED_MODEL)
+        vec_list = []
+        for sentence in sentences:
+            vec = sentence_encoder.encode_sentence(sentence)
+            vec_list.append(vec)
+        
         # Saving batch of sentence embeddings to pickle file...
         pkl_filename = os.path.join(args.destdir, "stvecs{:05d}.pkl".format(doc_id))
 
         print("Dumping %d sentence vectors for doc %d." % (l, doc_id))
         dbfile = open(pkl_filename, "wb")
-        pickle.dump(output_seq2vec, dbfile)
+        
+        pickle.dump(vec_list, dbfile)
         dbfile.close()
 
-        printProgressBar(
-            doc_id, len(ids_for_docs), prefix="Progress:", suffix="Complete", length=50
-        )
+        # printProgressBar(
+        #     doc_id, len(ids_for_docs), prefix="Progress:", suffix="Complete", length=50
+        # )
 
     print("Done!")
 
 
 """
     Execution example:
-        python gen_stvecs_for_docs.py --pandb plag_train.db --stdir ./stdir --destdir ./stvecs_by_doc --vocab vocabulary.txt
+        python gen_stvecs_for_docs.py --pandb '../data/pan_db' --destdir '../data/stvecs' --start 1
 """
 if __name__ == "__main__":
     main()

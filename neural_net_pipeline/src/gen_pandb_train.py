@@ -190,6 +190,6 @@ def main():
 
     print("Done!")
 
-
+# Example: python gen_pandb_train.py --srcdir '../pancorpus/corpus' --destfile '../data/pan_db'
 if __name__ == "__main__":
     main()
