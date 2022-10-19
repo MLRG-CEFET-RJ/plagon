@@ -1,6 +1,6 @@
 # pipeline
 .git
-neural_net_pipeline/pancorpus/train/*
+neural_net_pipeline/pancorpus/data/*
 neural_net_pipeline/plag_train.db
 neural_net_pipeline/src/__pycache__/
 neural_net_pipeline/data/pkl/*
