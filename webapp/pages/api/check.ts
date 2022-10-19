@@ -16,6 +16,8 @@ export default async function handler(
     const text = req.body;
     /*** SEND TEXT (text) TO THE NEURAL NET ***/
     /*** GET THE XML OUTPUTED FROM THE NEURAL NET AND SEND IT AS A RESPONSE ***/
+    // 1. Executar a rede neural (executar .py em .js
+    // 2. Pegar xml gerado (utilizar getPlagiarisms)
     const exampleDir = path.join(process.cwd(), "examples");
     const xmlJson = await parseXML(
       `${exampleDir}/suspicious-document00001.xml`
