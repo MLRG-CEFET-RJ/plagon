@@ -33,6 +33,9 @@ def main():
     sentences_ids, article_ids, author_ids, isplag_flags = pandb.get_sentences_metadata()
 
     print("Amount of sentence ids: ", len(sentences_ids))
+    print("Amount of article ids: ", len(article_ids))
+    print("Amount of author ids: ", len(author_ids))
+    print("Amount of flags: ", len(isplag_flags))
 
     #Saving metadata to pickle file...
     dbfile = open(args.destdir, 'wb')
@@ -46,9 +49,17 @@ def main():
     article_ids = metadata['article_ids']
     print(article_ids[:200])
 
-    metadata = load_metadata()
+    metadata = load_metadata(args.destdir)
     sentences_ids = metadata['sentences_ids']
     print(sentences_ids[:10])
+
+    metadata = load_metadata(args.destdir)
+    author_ids = metadata['author_ids']
+    print(author_ids[:200])
+
+    metadata = load_metadata(args.destdir)
+    isplag_flags = metadata['isplag_flags']
+    print(isplag_flags[:200])
 
 """
     Execution example:

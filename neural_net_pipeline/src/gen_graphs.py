@@ -6,6 +6,7 @@ from keras.models import model_from_json
 import os
 import argparse
 from pan_db import PanDatabaseManager
+from keras import backend as K
 
 def get_stvecs_for_doc(st_dir, doc_id):
     stvecs_filename = os.path.join(st_dir, 'stvecs{:05d}.pkl'.format(doc_id))
@@ -17,22 +18,19 @@ def get_stvecs_for_doc(st_dir, doc_id):
             vecs = pickle.load(file)
         return vecs
 
-def load_model():
+def load_model(model_dir):
     # load json and create model
-    json_file = open('../siamese_model/model.json', 'r')
+    json_file = open("../data/models/siamese_model/model_arch.json", 'r')
     loaded_model_json = json_file.read()
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
     # load weights into new model
-    loaded_model.load_weights("../siamese_model/model.h5")
+    loaded_model.load_weights("../data/models/siamese_model/model_weights.hdf5")
     print("Loaded model from disk")
     return loaded_model
 
 def main():
     print("Going to generate graphs for each test document...")
-
-    # load siamese net model
-    loaded_model = load_model()
 
     parser = argparse.ArgumentParser(description='Generates a set of graphs, one for each test document.')
     parser.add_argument(
@@ -41,7 +39,7 @@ def main():
         required=True)
     parser.add_argument(
         "--st_dir", 
-        help = 'source directory of the SkipThouths sentence embeddings', 
+        help = 'source directory of the sentence embeddings', 
         required=True)
     parser.add_argument(
         "--dest_dir", 
@@ -52,12 +50,19 @@ def main():
         help = 'source directory of the tuples files', 
         required=True)
     parser.add_argument(
+        "--model_dir", 
+        help = 'source directory of model', 
+        required=True)
+    parser.add_argument(
         "--max_docs", 
         help = 'max amount of docs to be processed (if not specified, all docs are processed)', 
         required=False,
         type=int)
 
     args = parser.parse_args()
+
+    # load siamese net model
+    loaded_model = load_model(args.model_dir)
 
     # 
     # Now, for each doc, generates its corresponding graph.
@@ -120,7 +125,7 @@ def main():
 
                 # load the sentence embedding vectors for each sentence.
                 vec1, vec2 = vecs[idx1], vecs[idx2]
-                example = (vec1.detach().numpy(), vec2.detach().numpy())
+                example = (vec1, vec2)
 
                 X_list.append(example)
 
@@ -153,8 +158,8 @@ def main():
             num_edges = len(info_for_curr_doc)
             num_vertices = len(mapping_from_sent_ids_to_local_ids)
 
-            print('Generating graph for document %d. max_dist: %f, #vertices: %d, #edges: %d' % 
-                (doc_id, max_dist, num_vertices, num_edges))
+            # print('Generating graph for document %d. max_dist: %f, #vertices: %d, #edges: %d' % 
+            #     (doc_id, max_dist, num_vertices, num_edges))
 
             #
             # Now that all relevant info for current doc is collected, we proceed to build
@@ -175,7 +180,8 @@ def main():
                 normalized_dist = (dist[i]/max_dist)    # value in the range [0,1]
                 similarity = 1 - normalized_dist        # maps distance to similarity
                 similarity = similarity - .5            # maps to the range [-0.5, +0.5]
-                f.write("%d %d %.2f\r\n" % (local_sentence_id1, local_sentence_id2, similarity))
+                #f.write("%d %d %.2f\r\n" % (local_sentence_id1, local_sentence_id2, similarity))
+                f.write(str(local_sentence_id1)+" "+str(local_sentence_id2)+" "+str(similarity)+"\r\n")
                 i = i + 1
 
             f.close()
@@ -192,6 +198,7 @@ def main():
     Execution examples:
         python gen_graphs.py --pandb plag_train.db --tuples_dir ../tuples --st_dir ./stvecs_by_doc --max_docs 2355 --desti_dir "../graphs"
         python gen_graphs.py --pandb plag_train.db --tuples_dir ../tuplesULTD --st_dir ./stvecs_by_doc --dest_dir "../graphsULTD"
+        python gen_graphs.py --pandb ../data/pan_db --tuples_dir ../data/tuples --st_dir ../data/stvecs --model_dir ../data/models/siamese_model --dest_dir ../data/graphs
 '''
 if __name__ == "__main__":
     main()
