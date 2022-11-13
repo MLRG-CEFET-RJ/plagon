@@ -7,7 +7,7 @@ import os
 from pan_db import PanDatabaseManager
 
 def get_stvecs_for_doc(doc_id):
-    stvecs_filename = './stvecs_by_doc/stvecs{:05d}.pkl'.format(doc_id)
+    stvecs_filename = "../data/stvecs/stvecs{:05d}.pkl".format(doc_id)
     if not os.path.isfile(stvecs_filename):
         print('File %s not found.' % stvecs_filename) 
         return None
@@ -20,24 +20,30 @@ def main():
     total_qty = 0
     total_qty_pos = 0
 
-    parser = argparse.ArgumentParser(description='Generates examples to train the siamese net.')
+    parser = argparse.ArgumentParser(
+        description='Generates examples to train the siamese net.'
+    )
     parser.add_argument(
         "--pandb",
         help = 'specify the sqlite PAN database file', 
-        required=True)
+        required=True
+    )
     parser.add_argument(
         "--srcdir", 
         help = 'source directory of tuples files', 
-        required=True)
+        required=True
+    )
     parser.add_argument(
         "--destdir", 
         help = 'destination directory for the triple files (one pkl per document)', 
-        required=True)
+        required=True
+    )
     parser.add_argument(
         '--start', 
         type=int,
         help = 'doc id at which the processing should start', 
-        required = True)
+        required = True
+    )
     args = parser.parse_args()
 
     pandb = PanDatabaseManager(args.pandb)
@@ -86,17 +92,16 @@ def main():
             idx2 = ids.index(sentence_id2)
 
             vec1, vec2 = vecs[idx1], vecs[idx2]
-            example = (vec1.detach().numpy(), vec2.detach().numpy(), similarity_bit)
+            example = (vec1, vec2, similarity_bit)
 
             examples.append(example)
+            total_qty = total_qty + 1
+            total_qty_pos = total_qty_pos + similarity_bit
 
         pickle.dump(examples, triples_file)
 
         tuples_file.close()
         triples_file.close()
-
-        total_qty = total_qty + 1
-        total_qty_pos = total_qty_pos + similarity_bit
 
     print('Done!')
     print('Amount of generated examples: %d.' % total_qty)
@@ -112,7 +117,7 @@ def main():
         not used to make training triples.
 
     Execution examples:
-        gen_triples.py --pandb plag_train.db --srcdir ../tuples40 --destdir ../triples40 --start 1
+        python gen_triples.py --pandb ../data/pan_db --srcdir ../data/tuples --destdir ../data/triples --start 1
 '''
 if __name__ == "__main__":
     main()
