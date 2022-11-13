@@ -80,7 +80,7 @@ def insert_into_sentence_table(c, article_id, author_id, data, sentence, plags):
     ]
     isplag = 0
     for plag_section in plags:
-        plag_interval = range(plag_section[0], plag_section[0] + plag_section[1])
+        plag_interval = range(int(plag_section[0]), int(plag_section[0]) + int(plag_section[1]))
         if values[3] in plag_interval:
             isplag = 1
             break
@@ -110,6 +110,9 @@ def populate_tables(c, tokenizer, srcdir):
                         author = feature.attrib["authors"]
                         author_id = insert_into_author_table_if_not_exists(c, author)
                         article_id = insert_into_article_table(c, f, author_id)
+                    # -- Adição do offset(caracter de início do fragmento plagiado) e lenght(tamanho do fragmento plagiado) para ajustar lógica da flag de plágio
+                    if "this_offset" in feature.attrib:
+                        plags.append([feature.attrib["this_offset"], feature.attrib["this_length"]])
                 if author_is_ignored:
                     print(
                         "Doc %s not imported because its author (%s) is in ignore list."
@@ -190,6 +193,6 @@ def main():
 
     print("Done!")
 
-# Example: python gen_pandb_train.py --srcdir '../pancorpus/corpus' --destfile '../data/pan_db'
+# Example: python gen_pandb_train.py --srcdir '../pancorpus/part_train' --destfile '../data/pan_db'
 if __name__ == "__main__":
     main()
