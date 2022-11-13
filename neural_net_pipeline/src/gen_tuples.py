@@ -5,8 +5,8 @@ import pickle
 import argparse, os
 
 # carrega o arquivo com metadados ordenados por author_ids, isplag_flags, sentences_ids
-def load_metadata():
-    dbfile = open('./data/pkl/metadata.pkl', 'rb')
+def load_metadata(path):
+    dbfile = open(path, 'rb')
     metadata = pickle.load(dbfile)
     return metadata
 
@@ -103,6 +103,10 @@ def main():
         "--destdir", 
         help = 'destination directory for tuple files (one pkl file per document)', 
         required=True)
+    parser.add_argument(
+        "--metadir", 
+        help = 'destination directory for metadata.pkl', 
+        required=True)
 
     args = parser.parse_args()
 
@@ -111,7 +115,7 @@ def main():
     else:
         print("Argument 'maxplag' set to %d." % args.maxplag)
 
-    metadata = load_metadata()
+    metadata = load_metadata(args.metadir)
     document_ids = metadata['article_ids']
     sentences_ids = metadata['sentences_ids']
     isplag_flags = metadata['isplag_flags']
@@ -199,7 +203,7 @@ def main():
         tuples_file.close()
 
     print("Done!")
-    print('Total amount of pos generated tuples: %d.' % total_qty_pos)                   
+    print('Total amount of pos generated tuples: %d.' % total_qty_pos)  
     print('Total amount of pos generated tuples: %d.' % total_qty_neg) 
     print('Total amount of ignored docs: %d.' % qty_ignored_docs)                   
 
@@ -228,7 +232,7 @@ def main():
 
 
     Execution examples:
-        python gen_tuples.py --maxplag 40 --destdir ../tuples40
+        python gen_tuples.py --maxplag 40 --destdir ../data/tuples --metadir '../data/pkl/metadata.pkl'
         python gen_tuples.py --destdir ../tuplesULTD --maxsent 50
         python gen_tuples.py --destdir ../tuplesULTD_51_100 --minsent 51 --maxsent 100
 '''
