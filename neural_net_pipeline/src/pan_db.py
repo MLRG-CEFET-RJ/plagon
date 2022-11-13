@@ -15,7 +15,7 @@ class PanDatabaseManager(object):
 
     def get_sentences_metadata(self):
         sentences = self.get_sentences()
-
+        print(sentences)
         sentences_ids = []
         article_ids = []
         author_ids = []
@@ -25,7 +25,7 @@ class PanDatabaseManager(object):
             sentences_ids.append(sentence[0])
             article_ids.append(sentence[1])
             author_ids.append(sentence[2])
-            isplag_flags.append(sentence[2])
+            isplag_flags.append(sentence[3])
 
         # sentences_ids, article_ids, author_ids, isplag_flags = map(
         #     list, zip(self.get_sentences())
@@ -86,6 +86,7 @@ class PanDatabaseManager(object):
         sql = 'SELECT fragment FROM sentence where fk_article_id = :doc_id order by id'
         self.cur.execute(sql, {"doc_id": int(doc_id)})
         resultset = self.cur.fetchall()
+        print(resultset)
         return [x[0] for x in resultset]
 
     def get_offset_and_length_for_sentence(self, sentence_id):
