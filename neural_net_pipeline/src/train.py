@@ -25,7 +25,7 @@ from keras.callbacks import ReduceLROnPlateau
 from keras.models import model_from_json
 
 import argparse, os, pickle, re, random, sys
-from tensorflow.python.keras.optimizers import Adadelta
+#from tensorflow.python.keras.optimizers import Adadelta
 
 import keras
 
@@ -86,8 +86,8 @@ class DataGenerator(keras.utils.Sequence):
             # Store sample
             filename = os.path.join(self.dataset_dir, 'ID{:010d}.npy'.format(ID))
             vecs = np.load(filename)
-            vec1 = vecs[0:2400]
-            vec2 = vecs[2400:]
+            vec1 = vecs[0:512]
+            vec2 = vecs[512:]
             assert(vec1.shape == vec2.shape)
             X[0][i] = vec1
             X[1][i] = vec2
@@ -160,6 +160,7 @@ def plot_losses(history):
     plt.savefig('loss.png')
 
 def get_partition(datasets_dir, subdir):
+    labels_filename = os.path.join(datasets_dir, subdir, 'labels.npy')
     subdir = os.path.join(datasets_dir, subdir)
     filelist = os.listdir(subdir)
     filelist.sort()
@@ -168,7 +169,6 @@ def get_partition(datasets_dir, subdir):
     ids = [re.findall(r'\d+', filename) for filename in filelist]
     ids = np.asarray([int(x[0]) for x in ids])
 
-    labels_filename = os.path.join(datasets_dir, subdir, 'labels.npy')
     labels = np.load(labels_filename)    
 
     return ids, labels 
@@ -195,9 +195,9 @@ def main():
     args = parser.parse_args()
 
     num_classes = 2
-    epochs = args.max_epochs
+    epochs = 10
 
-    input_shape = (2400,)
+    input_shape = (512,)
 
     # network definition
     base_network = create_base_network(input_shape)
@@ -252,7 +252,7 @@ def main():
         min_delta=1e-4)
 
     # Parameters
-    params = {'dim': (2400,),
+    params = {'dim': (512,),
               'batch_size': 128,
               'n_classes': 2,
               'shuffle': args.shuffle} # TODO: test effect of changing to 'True' value
@@ -308,7 +308,7 @@ def main():
     #   0 --> dissimilar sentences
     #   1 --> similar sentences
 
-    params_test = {'dim': (2400,),
+    params_test = {'dim': (512,),
               'batch_size': 1, #https://medium.com/@vijayabhaskar96/tutorial-image-classification-with-keras-flow-from-directory-and-generators
               'n_classes': 2,
               'shuffle': False}
@@ -343,6 +343,7 @@ def main():
 '''
     Execution example:
         python train.py --datasets_dir /mnt/sdc/ebezerra/datasets100 --model_dir ../siamese_model
+        python train.py --datasets_dir neural_net_pipeline\\data\\datasets10 --model_dir neural_net_pipeline\\data\\models\\siamese_model
 '''
 if __name__ == "__main__":
     seed(1)
