@@ -10,8 +10,10 @@ import tensorflow as tf
 import tensorflow_hub as hub
 
 MODULE_URL = "https://tfhub.dev/google/universal-sentence-encoder/4" 
+print('________________________________________________________________________')
 LOADED_MODEL = hub.load(MODULE_URL)
 print ("module %s loaded" % MODULE_URL)
+print('________________________________________________________________________')
 
 # Print iterations progress
 # source: https://stackoverflow.com/questions/3173320/text-progress-bar-in-the-console
@@ -99,10 +101,12 @@ def main():
         
         sentence_encoder = UniversalSentenceEncoder(LOADED_MODEL)
         vec_list = []
+        print('________________________________Sentences________________________________________')
         for sentence in sentences:
             vec = sentence_encoder.encode_sentence(sentence)
+            print(vec)
             vec_list.append(vec)
-        
+        print('_________________________________________________________________________________')
         # Saving batch of sentence embeddings to pickle file...
         pkl_filename = os.path.join(args.destdir, "stvecs{:05d}.pkl".format(doc_id))
 
