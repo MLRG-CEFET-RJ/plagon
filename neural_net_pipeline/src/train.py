@@ -161,9 +161,7 @@ def plot_losses(history):
 
 def get_partition(datasets_dir, subdir):
     labels_filename = os.path.join(datasets_dir, subdir, 'labels.npy')
-    print(subdir)
     subdir = os.path.join(datasets_dir, subdir)
-    print(subdir)
     filelist = os.listdir(subdir)
     filelist.sort()
     filelist.pop() # remove the last item (i.e., file name 'labels.npy')
@@ -197,7 +195,7 @@ def main():
     args = parser.parse_args()
 
     num_classes = 2
-    epochs = 10
+    epochs = 20
 
     input_shape = (512,)
 
