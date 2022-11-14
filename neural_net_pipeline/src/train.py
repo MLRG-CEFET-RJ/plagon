@@ -195,7 +195,7 @@ def main():
     args = parser.parse_args()
 
     num_classes = 2
-    epochs = 20
+    epochs = 40
 
     input_shape = (512,)
 
@@ -343,7 +343,7 @@ def main():
 '''
     Execution example:
         python train.py --datasets_dir /mnt/sdc/ebezerra/datasets100 --model_dir ../siamese_model
-        python train.py --datasets_dir neural_net_pipeline\\data\\datasets10 --model_dir neural_net_pipeline\\data\\models\\siamese_model
+        python train.py --datasets_dir ../data/datasets10 --model_dir ../data/models/siamese_model
 '''
 if __name__ == "__main__":
     seed(1)
