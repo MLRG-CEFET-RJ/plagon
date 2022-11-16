@@ -93,7 +93,7 @@ def main():
         l = len(sentences)
 
         # possível adaptação ##########################
-        if l > 5000:
+        if l > 3000:
             print(
                 "Skipping doc %d because it is too large (%d sentences)." % (doc_id, l)
             )
