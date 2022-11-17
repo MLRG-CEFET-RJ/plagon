@@ -91,12 +91,14 @@ def main():
 
         sentences = pandb.get_sentences_texts_for_doc(doc_id)
         l = len(sentences)
+        array = []
 
         # possível adaptação ##########################
         if l > 3000:
             print(
                 "Skipping doc %d because it is too large (%d sentences)." % (doc_id, l)
             )
+            array.append("tuples{:05d}.pkl".format(doc_id))
             continue
         
         sentence_encoder = UniversalSentenceEncoder(LOADED_MODEL)
@@ -117,6 +119,7 @@ def main():
         #     doc_id, len(ids_for_docs), prefix="Progress:", suffix="Complete", length=50
         # )
 
+    print(array)
     print("Done!")
 
 
