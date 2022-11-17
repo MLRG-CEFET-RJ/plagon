@@ -101,12 +101,9 @@ def main():
         
         sentence_encoder = UniversalSentenceEncoder(LOADED_MODEL)
         vec_list = []
-        print('________________________________Sentences________________________________________')
         for sentence in sentences:
             vec = sentence_encoder.encode_sentence(sentence)
-            print(vec)
             vec_list.append(vec)
-        print('_________________________________________________________________________________')
         # Saving batch of sentence embeddings to pickle file...
         pkl_filename = os.path.join(args.destdir, "stvecs{:05d}.pkl".format(doc_id))
 
