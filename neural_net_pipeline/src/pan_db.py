@@ -86,7 +86,6 @@ class PanDatabaseManager(object):
         sql = 'SELECT fragment FROM sentence where fk_article_id = :doc_id order by id'
         self.cur.execute(sql, {"doc_id": int(doc_id)})
         resultset = self.cur.fetchall()
-        print(resultset)
         return [x[0] for x in resultset]
 
     def get_offset_and_length_for_sentence(self, sentence_id):
