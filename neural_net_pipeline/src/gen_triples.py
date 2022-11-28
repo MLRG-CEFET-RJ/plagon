@@ -82,7 +82,7 @@ def main():
         for cur_tuple in tuples:
             sentence_id1 = cur_tuple[1]
             sentence_id2 = cur_tuple[2]
-            similarity_bit = cur_tuple[3]
+            similarity_bit = cur_tuple[2]
 
             if similarity_bit == 0.5:
                 ignored_tuples = ignored_tuples + 1
