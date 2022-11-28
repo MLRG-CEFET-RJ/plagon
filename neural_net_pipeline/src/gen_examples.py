@@ -116,6 +116,7 @@ def main():
         python gen_examples.py --triples_dir /mnt/sdc/ebezerra/triples/ --destdir /mnt/sdc/ebezerra/datasets10 --max_docs 10
         python gen_examples.py --triples_dir /mnt/sdc/ebezerra/triples/ --destdir /mnt/sdc/ebezerra/datasets300 --max_docs 300
         python gen_examples.py --triples_dir ../data/triples/ --destdir ../data/datasets10 --max_docs 10
+        ../../../../../data/home2/jrodrigues/datasets10/
 '''
 if __name__ == "__main__":
     main()

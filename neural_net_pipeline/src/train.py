@@ -215,7 +215,7 @@ def main():
 
     distance = Lambda(function=l1_norm,
                       output_shape=lambda x: x[0])([processed_a, processed_b])
-
+    #todo - Dúvida 
     predictions = Dense(2, activation='sigmoid', name='Similarity_layer')(distance)
     
     model = Model([input_a, input_b], predictions)
