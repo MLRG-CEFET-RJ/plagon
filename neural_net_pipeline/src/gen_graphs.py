@@ -152,14 +152,19 @@ def main():
 
             dist = loaded_model.predict([te_pairs[:, 0], te_pairs[:, 1]])
 
+            dist = np.transpose(dist)
+
+            function = lambda v: np.abs(v[0] - v[1])
+            dist = function(dist)
+
             max_dist = np.amax(dist, axis=0)
             print('max_dist: ', max_dist)
 
             num_edges = len(info_for_curr_doc)
             num_vertices = len(mapping_from_sent_ids_to_local_ids)
 
-            # print('Generating graph for document %d. max_dist: %f, #vertices: %d, #edges: %d' % 
-            #     (doc_id, max_dist, num_vertices, num_edges))
+            print('Generating graph for document %d. max_dist: %f, #vertices: %d, #edges: %d' % 
+                (doc_id, max_dist, num_vertices, num_edges))
 
             #
             # Now that all relevant info for current doc is collected, we proceed to build
@@ -180,8 +185,7 @@ def main():
                 normalized_dist = (dist[i]/max_dist)    # value in the range [0,1]
                 similarity = 1 - normalized_dist        # maps distance to similarity
                 similarity = similarity - .5            # maps to the range [-0.5, +0.5]
-                #f.write("%d %d %.2f\r\n" % (local_sentence_id1, local_sentence_id2, similarity))
-                f.write(str(local_sentence_id1)+" "+str(local_sentence_id2)+" "+str(similarity)+"\r\n")
+                f.write("%d %d %.2f\r\n" % (local_sentence_id1, local_sentence_id2, similarity))
                 i = i + 1
 
             f.close()
