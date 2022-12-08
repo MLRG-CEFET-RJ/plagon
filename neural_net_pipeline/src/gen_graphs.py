@@ -153,9 +153,10 @@ def main():
             dist = loaded_model.predict([te_pairs[:, 0], te_pairs[:, 1]])
 
             dist = np.transpose(dist)
+            dist = dist[0]
 
-            function = lambda v: np.abs(v[0] - v[1])
-            dist = function(dist)
+            # function = lambda v: np.abs(v[0] - v[1])
+            # dist = function(dist)
 
             max_dist = np.amax(dist, axis=0)
             print('max_dist: ', max_dist)
